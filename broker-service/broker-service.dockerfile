@@ -17,4 +17,10 @@ RUN mkdir /app
 
 COPY --from=builder /app/brokerApp /app
 
+EXPOSE 8080
+
+RUN ls -l /app
+
+RUN chmod +x /app/brokerApp
+
 CMD ["/app/brokerApp"]
