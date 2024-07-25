@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	_ "github.com/jackc/pgconn"
@@ -14,7 +13,7 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-const webPort = "8080"
+const webPort = "8081"
 
 var counts int64
 
@@ -50,25 +49,29 @@ func main() {
 func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		log.Fatal("cannot connect to db")
+		log.Fatal("cannot connect to db ", err)
 		return nil, err
 	}
 	err = db.Ping()
 
 	if err != nil {
-		log.Fatal("cannot connect to db")
+		log.Fatal("cannot connect to db ", err)
 		return nil, err
 	}
 	return db, nil
 }
 
 func connectToDB() *sql.DB {
-	dsn := os.Getenv("DSN")
+	// dsn := os.Getenv("DSN")
 
 	for {
 		log.Println("Attempt to connect to db")
-		conn, err := openDB(dsn)
+		log.Println(counts)
 
+		conn, err := openDB("host=localhost port:5432 user=postgres dbname=users password=postgres sslmode=disable timezone=UTC connect_timeout=5")
+
+		log.Println(conn)
+		log.Println(err)
 		if err != nil {
 			log.Println("Postgres not yet ready")
 			counts++
@@ -83,6 +86,5 @@ func connectToDB() *sql.DB {
 		}
 		log.Println("Backing off for two seconds...")
 		time.Sleep(1 * time.Second)
-		continue
 	}
 }
