@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	_ "github.com/jackc/pgconn"
@@ -62,13 +63,13 @@ func openDB(dsn string) (*sql.DB, error) {
 }
 
 func connectToDB() *sql.DB {
-	// dsn := os.Getenv("DSN")
+	dsn := os.Getenv("DSN")
 
 	for {
 		log.Println("Attempt to connect to db")
 		log.Println(counts)
 
-		conn, err := openDB("host=localhost port:5432 user=postgres dbname=users password=postgres sslmode=disable timezone=UTC connect_timeout=5")
+		conn, err := openDB(dsn)
 
 		log.Println(conn)
 		log.Println(err)
